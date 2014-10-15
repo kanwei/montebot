@@ -8,12 +8,6 @@
   :p1 2r000000000
   :p2 2r000000000})
 
-(defn filter-board [f board]
-  (keep f (map-indexed (fn [i v]
-                  (if (nil? v)
-                    i))
-                board)))
-
 (def possible-moves
   (for [i (range 9)]
     (math/expt 2 i)))
@@ -22,7 +16,6 @@
   (let [occupied (bit-or (:p1 state) (:p2 state))]
     (filter #(zero? (bit-and occupied %))
                       possible-moves)))
-
 
 (def winning-positions
   [2r111000000                                              ;horizontals
@@ -40,7 +33,6 @@
                         (= winning-pos (bit-and board winning-pos)))
                       winning-positions)))
 
-
 (defn format-stats [stats]
   (println "===============================")
   (doseq [[move stats] (sort stats)]
@@ -52,7 +44,13 @@
       (update-in [(:active state)] #(bit-or % move))
       (assoc :active (if (= :p1 (:active state)) :p2 :p1))))
 
-(perform-move (init) 2r000010000)
+(defn simulate-step [state]
+  (cond (check-win (:p1 state)) 1
+        (check-win (:p2 state)) -1
+        (= 2r111111111 (bit-or (:p1 state) (:p2 state))) 0
+        :else (let [move (rand-nth (valid-moves state))]
+                (recur (perform-move state move)))))
+
 
 (defn simulate [state]
   (let [valids (valid-moves state)]
@@ -71,14 +69,8 @@
 
 
 
-(defn simulate-step [state]
-  (cond (check-win (:p1 state)) 1
-        (check-win (:p2 state)) -1
-        (= 2r111111111 (bit-or (:p1 state) (:p2 state))) 0
-        :else (let [move (rand-nth (valid-moves state))]
-                (recur (perform-move state move)))))
 
-(simulate (init))
-(simulate {:p1 2r000110100 :p2 2r101000000 :active :p2})
+#_(simulate (init))
+(simulate {:p1 2r000011100 :p2 2r000100011 :active :p1})
 
-(crit/quick-bench (simulate-step (init)))
+#_(crit/quick-bench (simulate-step (init)))
