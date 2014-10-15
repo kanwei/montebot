@@ -29,21 +29,27 @@
 (empty? (valid-moves {:p1 #{35 36 37 38 39 40 41}}))
 
 (defn check-nw [pos bits]
-  (and (>= (mod pos 7) 3)
+  (and
+    (>= (mod pos 7) 3)
+    (< pos 21)
     (= 3 (count (clojure.set/intersection bits
                                           #{(+ pos 6) (+ pos 12) (+ pos 18)})))))
 
 (defn check-north [pos bits]
-  (= 3 (count (clojure.set/intersection bits
-                                        #{(+ pos 7) (+ pos 14) (+ pos 21)}))))
+  (and (< pos 21)
+    (= 3 (count (clojure.set/intersection bits
+                                          #{(+ pos 7) (+ pos 14) (+ pos 21)})))))
 
 (defn check-ne [pos bits]
-  (and (< (mod pos 7) 4)
+  (and
+    (< (mod pos 7) 4)
+    (< pos 21)
     (= 3 (count (clojure.set/intersection bits
                                           #{(+ pos 8) (+ pos 16) (+ pos 24)})))))
 
 (defn check-east [pos bits]
-  (and (< (mod pos 7) 4)
+  (and
+    (< (mod pos 7) 4)
     (= 3 (count (clojure.set/intersection bits
                                           #{(+ pos 1) (+ pos 2) (+ pos 3)})))))
 
