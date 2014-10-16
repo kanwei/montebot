@@ -61,6 +61,11 @@
                             (check-nw pos board)))
                       board)))
 
+(defn check-terminal [state]
+  (cond (check-win (:p1 state)) 1
+        (check-win (:p2 state)) -1
+        (empty? (valid-moves state)) 0))
+
 #_(crit/quick-bench (check-win #{1 3 4 12 20 23}))
 
 (defn format-stats [stats]
@@ -76,7 +81,9 @@
 
 
 (defn add-node [move state]
-  {:state state :unvisited (set (valid-moves state)) :action move :visited 0 :score 0 :children {}}
+  (if-let [result (check-terminal state)]
+    {:state state :terminal true :visited 0 :score 0 :result result}
+    {:state state :unvisited (set (valid-moves state)) :action move :visited 0 :score 0 :children {}})
   )
 
 (add-node nil (init))
@@ -120,42 +127,39 @@
 (defn best-child [node]
   (last (sort-by #(uct (second %) (:visited node)) (:children node))))
 
-(def a [1 2 3])
-(first a)
-(first (concat a [:b]))
-(concat a [:b])
 
 (defn simulate-game [state]
-  (cond (check-win (:p1 state)) 1
-        (check-win (:p2 state)) -1
-        (empty? (valid-moves state)) 0
-        :else (let [move (rand-nth (valid-moves state))]
-                (recur (perform-move state move)))))
+  (if-let [result (check-terminal state)]
+    result
+    (let [move (rand-nth (valid-moves state))]
+      (recur (perform-move state move)))))
 
 (defn process [mtcs path]
-  (if false #_(> (:visited mtcs) 10000)
+  (if #_false (> (:visited mtcs) 100000)
     (best-child mtcs)
     (let [node (traverse mtcs path)
           child-path (interleave (repeat :children) path)]
-      (cond (not (empty? (:unvisited node)))
-            (let [move (rand-nth (seq (:unvisited node)))
-                  new-state (perform-move (:state node) move)
-                  new-node (add-node move new-state)
-                  result (simulate-game new-state)]
-              (recur (-> mtcs
-                         (update-in (concat child-path [:unvisited]) disj move)
-                         (assoc-in (concat child-path [:children move]) new-node)
-                         (backprop (concat path [move]) result)
-                         ) []))
+      (cond
+        (:terminal node)
+        (recur (backprop mtcs path (:result node)) [])
 
-            (empty? (:children node))
-            (println "terminal")
-            :else (let [[child-n _] (best-child node)]
-                    (recur mtcs (conj path child-n)))))))
+        (not (empty? (:unvisited node)))
+        (let [move (rand-nth (seq (:unvisited node)))
+              new-state (perform-move (:state node) move)
+              new-node (add-node move new-state)
+              result (simulate-game new-state)]
+          (recur (-> mtcs
+                     (update-in (concat child-path [:unvisited]) disj move)
+                     (assoc-in (concat child-path [:children move]) new-node)
+                     (backprop (concat path [move]) result)
+                     ) []))
 
-(loop [root (add-node :root (init))]
-  (println (process root []))
-  #_(recur root))
+        :else (let [[child-n _] (best-child node)]
+                (recur mtcs (conj path child-n)))))))
+
+(time (loop [root (add-node :root (init))]
+   (process root [])
+   #_(recur root)))
 
 
 
