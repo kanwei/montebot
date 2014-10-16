@@ -1,36 +1,15 @@
 # ulam
 
-FIXME: description
+Monte Carlo Tree Search (MCTS) for Clojure. Framework for general game playing.
 
-## Installation
+## Inspiration
 
-Download from http://example.com/FIXME.
-
-## Usage
-
-FIXME: explanation
-
-    $ java -jar ulam-0.1.0-standalone.jar [args]
-
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
+* http://www.cameronius.com/cv/mcts-survey-master.pdf
+* https://project.dke.maastrichtuniversity.nl/games/files/phd/Nijssen_thesis.pdf
 
 ## License
 
-Copyright © 2014 FIXME
+Copyright © 2014 Kanwei Li
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
