@@ -22,7 +22,7 @@
 
 (defn valid-moves [state]
   (filter identity (map (partial highest-column (concat (:p1 state) (:p2 state)))
-        cols)))
+                        cols)))
 
 (valid-moves (init))
 
@@ -85,8 +85,7 @@
            :score 0
            :moves #{}
            :children {:move
-                       {:visited 0 :score 0 :children {}}
-                       }})
+                       {:visited 0 :score 0 :children {}}}})
 
 (defn uct [node parent-visits]
   (+ (/ (:score node)
@@ -101,8 +100,6 @@
       (update-in (concat (interleave (repeat :children) path) [:visited]) inc)
       (update-in (concat (interleave (repeat :children) path) [:score]) #(+ % result))))
 
-
-
 (defn backprop [root path result]
   (if-not (empty? path)
     (recur (update-node root path result)
@@ -111,34 +108,56 @@
     (update-node root [] result)))
 
 (backprop {:visited 0 :score 0 :children {0 {:visited 0 :score 0}}}
-             [0]
-             15)
+          [0]
+          15)
 
+(defn traverse [node path]
+  (if (empty? path)
+    node
+    (recur (get (:children node) (first path))
+           (rest path))))
 
+(defn best-child [node]
+  (last (sort-by #(uct (second %) (:visited node)) (:children node))))
 
-(defn process [mtcs node]
-  (if-not (empty? (:unvisited node))
-    (let [move (rand-nth (vec (:unvisited node)))
-          new-node (add-node move (perform-move (:state node) move))
-          result (simulate-step (perform-move (:state node) move))
-          ]
-      (recur (-> mtcs
-                 (update-in [:unvisited] disj move)
-                 (assoc-in [:children move] new-node)
-                 (backprop [move] result)
-               ) mtcs))
-    (map #(uct % (:visited node))
-         (vals (:children node)))))
+(def a [1 2 3])
+(first a)
+(first (concat a [:b]))
+(concat a [:b])
 
-(let [root (add-node :root (init))]
-  (process root root))
-
-(defn simulate-step [state]
+(defn simulate-game [state]
   (cond (check-win (:p1 state)) 1
         (check-win (:p2 state)) -1
         (empty? (valid-moves state)) 0
         :else (let [move (rand-nth (valid-moves state))]
                 (recur (perform-move state move)))))
+
+(defn process [mtcs path]
+  (if false #_(> (:visited mtcs) 10000)
+    (best-child mtcs)
+    (let [node (traverse mtcs path)
+          child-path (interleave (repeat :children) path)]
+      (cond (not (empty? (:unvisited node)))
+            (let [move (rand-nth (seq (:unvisited node)))
+                  new-state (perform-move (:state node) move)
+                  new-node (add-node move new-state)
+                  result (simulate-game new-state)]
+              (recur (-> mtcs
+                         (update-in (concat child-path [:unvisited]) disj move)
+                         (assoc-in (concat child-path [:children move]) new-node)
+                         (backprop (concat path [move]) result)
+                         ) []))
+
+            (empty? (:children node))
+            (println "terminal")
+            :else (let [[child-n _] (best-child node)]
+                    (recur mtcs (conj path child-n)))))))
+
+(loop [root (add-node :root (init))]
+  (println (process root []))
+  #_(recur root))
+
+
 
 (defn simulate [state]
   (let [valids (valid-moves state)]
@@ -149,7 +168,7 @@
       (if (= 1 (mod n 10000))
         (format-stats stats))
       (let [random-move (rand-nth valids)
-            result (simulate-step (perform-move state random-move))]
+            result (simulate-game (perform-move state random-move))]
         (recur (inc n)
                (-> stats
                    (update-in [random-move :n] inc)
