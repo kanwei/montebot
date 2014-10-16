@@ -37,8 +37,8 @@
 
 (defn check-north [pos bits]
   (and (< pos 21)
-    (= 3 (count (clojure.set/intersection bits
-                                          #{(+ pos 7) (+ pos 14) (+ pos 21)})))))
+       (= 3 (count (clojure.set/intersection bits
+                                             #{(+ pos 7) (+ pos 14) (+ pos 21)})))))
 
 (defn check-ne [pos bits]
   (and
@@ -74,6 +74,65 @@
       (update-in [(:active state)] #(conj % move))
       (assoc :active (if (= :p1 (:active state)) :p2 :p1))))
 
+
+(defn add-node [move state]
+  {:state state :unvisited (set (valid-moves state)) :action move :visited 0 :score 0 :children {}}
+  )
+
+(add-node nil (init))
+
+(def tree {:visited 0
+           :score 0
+           :moves #{}
+           :children {:move
+                       {:visited 0 :score 0 :children {}}
+                       }})
+
+(defn uct [node parent-visits]
+  (+ (/ (:score node)
+        (:visited node))
+     (Math/sqrt (/ (* 2 (Math/log parent-visits))
+                   (:visited node)))))
+
+#_(crit/quick-bench (uct {:score 3.0 :visited 10} 100))
+
+(defn update-node [root path result]
+  (-> root
+      (update-in (concat (interleave (repeat :children) path) [:visited]) inc)
+      (update-in (concat (interleave (repeat :children) path) [:score]) #(+ % result))))
+
+
+
+(defn backprop [root path result]
+  (if-not (empty? path)
+    (recur (update-node root path result)
+           (butlast path)
+           result)
+    (update-node root [] result)))
+
+(backprop {:visited 0 :score 0 :children {0 {:visited 0 :score 0}}}
+             [0]
+             15)
+
+
+
+(defn process [mtcs node]
+  (if-not (empty? (:unvisited node))
+    (let [move (rand-nth (vec (:unvisited node)))
+          new-node (add-node move (perform-move (:state node) move))
+          result (simulate-step (perform-move (:state node) move))
+          ]
+      (recur (-> mtcs
+                 (update-in [:unvisited] disj move)
+                 (assoc-in [:children move] new-node)
+                 (backprop [move] result)
+               ) mtcs))
+    (map #(uct % (:visited node))
+         (vals (:children node)))))
+
+(let [root (add-node :root (init))]
+  (process root root))
+
 (defn simulate-step [state]
   (cond (check-win (:p1 state)) 1
         (check-win (:p2 state)) -1
@@ -96,5 +155,5 @@
                    (update-in [random-move :n] inc)
                    (update-in [random-move :total] #(+ % result))))))))
 
-(simulate (init))
+#_(simulate {:active :p2 :p1 #{3} :p2 #{}})
 
