@@ -71,6 +71,6 @@
 
 
 #_(simulate (init))
-(simulate {:p1 2r000011100 :p2 2r000100011 :active :p1})
+#_(simulate {:p1 2r000011100 :p2 2r000100011 :active :p1})
 
 #_(crit/quick-bench (simulate-step (init)))

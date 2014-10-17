@@ -135,7 +135,7 @@
       (recur (perform-move state move)))))
 
 (defn process [mtcs path]
-  (if #_false (> (:visited mtcs) 100000)
+  (if #_false (> (:visited mtcs) 1000)
     (best-child mtcs)
     (let [node (traverse mtcs path)
           child-path (interleave (repeat :children) path)]
@@ -158,9 +158,7 @@
                 (recur mtcs (conj path child-n)))))))
 
 (time (loop [root (add-node :root (init))]
-   (process root [])
-   #_(recur root)))
-
+   (process root [])))
 
 
 (defn simulate [state]
