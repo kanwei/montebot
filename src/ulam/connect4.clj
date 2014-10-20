@@ -118,14 +118,9 @@
 
 (subvec [1 2 3] 0 (dec (count [1 2 3])))
 
-
 (defn best-child [mtcs path]
-  (last (sort-by #(uct (second %) (:visited (mtcs path)))
-                 (filter (fn [[p node]]
-                           (and (= (count p)
-                                   (inc (count path)))
-                                (= (subvec p 0 (count path))
-                                   path))) mtcs))))
+  (last (sort-by #(uct (mtcs %) (:visited (mtcs path)))
+                 (:children (mtcs path)))))
 
 (defn simulate-game [state]
   (if-let [result (check-terminal state)]
@@ -133,41 +128,41 @@
     (let [move (rand-nth (valid-moves state))]
       (recur (perform-move state move)))))
 
-(defn add-node [move state]
-  (if-let [result (check-terminal state)]
-    {:state state :terminal true :visited 0 :score 0 :result result}
-    {:state state :unvisited (set (valid-moves state)) :action move :visited 0 :score 0 :children {}})
-  )
-
 (defn generate-node [mtcs path state]
-  (if-let [result (check-terminal state)]
-    {:state state :terminal true :visited 0 :score 0 :result result}
-    (reduce (fn [coll move]
-              (assoc coll (conj path move) {:state (perform-move state move) :visited 0 :score 0})
-              )
-            mtcs
-            (valid-moves state)))
-  )
+  (reduce (fn [coll move]
+            (let [new-state (perform-move state move)
+                  new-path (conj path move)
+                  terminal-result (check-terminal new-state)]
+              (-> coll
+                  (update-in [path :children] #(conj % new-path))
+                  (assoc new-path
+                           (if terminal-result
+                             {:state new-state :terminal true :visited 0 :score 0 :result terminal-result}
+                             {:state new-state :visited 0 :score 0}))))
+            )
+          mtcs
+          (valid-moves state)))
 
 (backprop (generate-node {[] {:visited 0 :score 0}} [] (init)) [6] 1)
 
+(update-in {} [:fuck] #(conj % 1))
 (defn process [mtcs path]
   (let [node (mtcs path)]
-      (cond
-        (> (:visited node) 100)
-        (sort mtcs)
+    (cond
+      (> (:visited node) 1000)
+      (best-child mtcs [])
 
-        (zero? (:visited node))
-        (recur (-> mtcs
+      (:terminal node)
+      (recur (backprop mtcs path (:result node)) [])
+
+      (zero? (:visited node))
+      (recur (-> mtcs
                  (generate-node path (:state node))
                  (backprop path (simulate-game (:state node))))
-               [])
+             [])
 
-        (:terminal node)
-        (recur (backprop mtcs path (:result node)) [])
-
-        :else (let [[child-path _] (best-child mtcs path)]
-                (recur mtcs child-path)))))
+      :else (let [child-path (best-child mtcs path)]
+              (recur mtcs child-path)))))
 
 (time (loop [root {[] {:visited 0 :score 0 :state (init)}}]
    (process root [])))
