@@ -95,38 +95,37 @@
                        {:visited 0 :score 0 :children {}}}})
 
 (defn uct [node parent-visits]
-  (+ (/ (:score node)
-        (:visited node))
-     (Math/sqrt (/ (* 2 (Math/log parent-visits))
-                   (:visited node)))))
+  (if (zero? (:visited node))
+    Long/MAX_VALUE
+    (+ (/ (:score node)
+          (:visited node))
+       (Math/sqrt (/ (* 2 (Math/log parent-visits))
+                     (:visited node))))))
 
 #_(crit/quick-bench (uct {:score 3.0 :visited 10} 100))
 
 (defn update-node [root path result]
   (-> root
-      (update-in (concat (interleave (repeat :children) path) [:visited]) inc)
-      (update-in (concat (interleave (repeat :children) path) [:score]) #(+ % result))))
+      (update-in [path :visited] inc)
+      (update-in [path :score] #(+ % result))))
 
 (defn backprop [root path result]
   (if-not (empty? path)
     (recur (update-node root path result)
-           (butlast path)
+           (subvec path 0 (dec (count path)))
            result)
     (update-node root [] result)))
 
-(backprop {:visited 0 :score 0 :children {0 {:visited 0 :score 0}}}
-          [0]
-          15)
+(subvec [1 2 3] 0 (dec (count [1 2 3])))
 
-(defn traverse [node path]
-  (if (empty? path)
-    node
-    (recur (get (:children node) (first path))
-           (rest path))))
 
-(defn best-child [node]
-  (last (sort-by #(uct (second %) (:visited node)) (:children node))))
-
+(defn best-child [mtcs path]
+  (last (sort-by #(uct (second %) (:visited (mtcs path)))
+                 (filter (fn [[p node]]
+                           (and (= (count p)
+                                   (inc (count path)))
+                                (= (subvec p 0 (count path))
+                                   path))) mtcs))))
 
 (defn simulate-game [state]
   (if-let [result (check-terminal state)]
@@ -134,32 +133,44 @@
     (let [move (rand-nth (valid-moves state))]
       (recur (perform-move state move)))))
 
+(defn add-node [move state]
+  (if-let [result (check-terminal state)]
+    {:state state :terminal true :visited 0 :score 0 :result result}
+    {:state state :unvisited (set (valid-moves state)) :action move :visited 0 :score 0 :children {}})
+  )
+
+(defn generate-node [mtcs path state]
+  (if-let [result (check-terminal state)]
+    {:state state :terminal true :visited 0 :score 0 :result result}
+    (reduce (fn [coll move]
+              (assoc coll (conj path move) {:state (perform-move state move) :visited 0 :score 0})
+              )
+            mtcs
+            (valid-moves state)))
+  )
+
+(backprop (generate-node {[] {:visited 0 :score 0}} [] (init)) [6] 1)
+
 (defn process [mtcs path]
-  (if #_false (> (:visited mtcs) 1000)
-    (best-child mtcs)
-    (let [node (traverse mtcs path)
-          child-path (interleave (repeat :children) path)]
+  (let [node (mtcs path)]
       (cond
+        (> (:visited node) 100)
+        (sort mtcs)
+
+        (zero? (:visited node))
+        (recur (-> mtcs
+                 (generate-node path (:state node))
+                 (backprop path (simulate-game (:state node))))
+               [])
+
         (:terminal node)
         (recur (backprop mtcs path (:result node)) [])
 
-        (not (empty? (:unvisited node)))
-        (let [move (rand-nth (seq (:unvisited node)))
-              new-state (perform-move (:state node) move)
-              new-node (add-node move new-state)
-              result (simulate-game new-state)]
-          (recur (-> mtcs
-                     (update-in (concat child-path [:unvisited]) disj move)
-                     (assoc-in (concat child-path [:children move]) new-node)
-                     (backprop (concat path [move]) result)
-                     ) []))
+        :else (let [[child-path _] (best-child mtcs path)]
+                (recur mtcs child-path)))))
 
-        :else (let [[child-n _] (best-child node)]
-                (recur mtcs (conj path child-n)))))))
-
-(time (loop [root (add-node :root (init))]
+(time (loop [root {[] {:visited 0 :score 0 :state (init)}}]
    (process root [])))
-
 
 (defn simulate [state]
   (let [valids (valid-moves state)]
