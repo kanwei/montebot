@@ -63,7 +63,7 @@
 
 (defn check-terminal [state]
   (cond (check-win (:p1 state)) 1
-        (check-win (:p2 state)) -1
+        (check-win (:p2 state)) 2
         (empty? (valid-moves state)) 0))
 
 #_(crit/quick-bench (check-win #{1 3 4 12 20 23}))
@@ -79,21 +79,6 @@
       (update-in [(:active state)] #(conj % move))
       (assoc :active (if (= :p1 (:active state)) :p2 :p1))))
 
-
-(defn add-node [move state]
-  (if-let [result (check-terminal state)]
-    {:state state :terminal true :visited 0 :score 0 :result result}
-    {:state state :unvisited (set (valid-moves state)) :action move :visited 0 :score 0 :children {}})
-  )
-
-(add-node nil (init))
-
-(def tree {:visited 0
-           :score 0
-           :moves #{}
-           :children {:move
-                       {:visited 0 :score 0 :children {}}}})
-
 (defn uct [node parent-visits]
   (if (zero? (:visited node))
     Long/MAX_VALUE
@@ -107,14 +92,22 @@
 (defn update-node [root path result]
   (-> root
       (update-in [path :visited] inc)
-      (update-in [path :score] #(+ % result))))
+      (update-in [path :score]
+                 (fn [x] (+ x (let [node (root path)]
+                            (cond
+                              (zero? result) 0.5
+                              (= result (:player node)) 1
+                              (not= result (:player node)) 0
+                              )))))))
 
 (defn backprop [root path result]
-  (if-not (empty? path)
+  (if-not (nil? path)
     (recur (update-node root path result)
-           (subvec path 0 (dec (count path)))
+           (if-not (empty? path)
+             (subvec path 0 (dec (count path)))
+             nil)
            result)
-    (update-node root [] result)))
+    root))
 
 (subvec [1 2 3] 0 (dec (count [1 2 3])))
 
@@ -130,27 +123,27 @@
 
 (defn generate-node [mtcs path state]
   (reduce (fn [coll move]
-            (let [new-state (perform-move state move)
+            (let [current-player (:player (mtcs path))
+                   new-state (perform-move state move)
                   new-path (conj path move)
                   terminal-result (check-terminal new-state)]
               (-> coll
                   (update-in [path :children] #(conj % new-path))
                   (assoc new-path
                            (if terminal-result
-                             {:state new-state :terminal true :visited 0 :score 0 :result terminal-result}
-                             {:state new-state :visited 0 :score 0}))))
+                             {:player (- 3 current-player) :state new-state :terminal true :visited 0 :score 0 :result terminal-result}
+                             {:player (- 3 current-player) :state new-state :visited 0 :score 0}))))
             )
           mtcs
           (valid-moves state)))
 
-(backprop (generate-node {[] {:visited 0 :score 0}} [] (init)) [6] 1)
+(backprop (generate-node {[] {:visited 0 :score 0 :player 1}} [] (init)) [6] 1)
 
-(update-in {} [:fuck] #(conj % 1))
 (defn process [mtcs path]
   (let [node (mtcs path)]
     (cond
-      (> (:visited node) 1000)
-      (best-child mtcs [])
+      (> (:visited node) 100)
+      (filter (fn [[p v]] (= 1 (count p))) mtcs)
 
       (:terminal node)
       (recur (backprop mtcs path (:result node)) [])
@@ -164,7 +157,7 @@
       :else (let [child-path (best-child mtcs path)]
               (recur mtcs child-path)))))
 
-(time (loop [root {[] {:visited 0 :score 0 :state (init)}}]
+(time (loop [root {[] {:visited 0 :score 0 :player 1 :state (init)}}]
    (process root [])))
 
 (defn simulate [state]
