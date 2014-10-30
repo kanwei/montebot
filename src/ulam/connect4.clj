@@ -4,7 +4,7 @@
            [io.aviso.repl :as repl]
            [clojure.math.numeric-tower :as math]))
 
-(defn init []
+(defn initial-state []
   {:active :p1
    :p1 #{}
    :p2 #{}})
@@ -24,7 +24,7 @@
   (filter identity (map (partial highest-column (concat (:p1 state) (:p2 state)))
                         cols)))
 
-(valid-moves (init))
+(valid-moves (initial-state))
 
 (empty? (valid-moves {:p1 #{35 36 37 38 39 40 41}}))
 
@@ -109,8 +109,6 @@
            result)
     root))
 
-(subvec [1 2 3] 0 (dec (count [1 2 3])))
-
 (defn best-child [mtcs path]
   (last (sort-by #(uct (mtcs %) (:visited (mtcs path)))
                  (:children (mtcs path)))))
@@ -137,43 +135,25 @@
           mtcs
           (valid-moves state)))
 
-(backprop (generate-node {[] {:visited 0 :score 0 :player 1}} [] (init)) [6] 1)
-
-(defn process [mtcs path]
+(defn mtcs-tree [mtcs path]
   (let [node (mtcs path)]
     (cond
-      (>= (:visited node) 4000)
-      (clojure.string/join \newline (map (fn [[x y]] (str x \tab (double (/ (:score y) (:visited y))))) (select-keys mtcs (:children (mtcs [])))))
-
+      (>= (:visited node) 3000)
+      mtcs
+      ; Terminal nodes are ones that have reached a final state and only return one result
       (:terminal node)
       (recur (backprop mtcs path (:result node)) [])
 
+      ; Never visited this node before, so expand it
       (zero? (:visited node))
       (recur (-> mtcs
                  (generate-node path (:state node))
                  (backprop path (simulate-game (:state node))))
              [])
 
+      ; Use UCT to traverse down the tree
       :else (let [child-path (best-child mtcs path)]
               (recur mtcs child-path)))))
 
-(time (loop [root {[] {:visited 0 :score 0 :player 2 :state (init)}}]
-   (process root [])))
-
-(defn simulate [state]
-  (let [valids (valid-moves state)]
-    (loop [n 0
-           stats (into {}
-                       (for [move valids]
-                         [move {:total 0 :n 0}]))]
-      (if (= 1 (mod n 10000))
-        (format-stats stats))
-      (let [random-move (rand-nth valids)
-            result (simulate-game (perform-move state random-move))]
-        (recur (inc n)
-               (-> stats
-                   (update-in [random-move :n] inc)
-                   (update-in [random-move :total] #(+ % result))))))))
-
-#_(simulate {:active :p2 :p1 #{3} :p2 #{}})
-
+(time (loop [root {[] {:visited 0 :score 0 :player 2 :state (initial-state)}}]
+        (best-child (mtcs-tree root []) [])))
