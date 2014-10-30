@@ -142,8 +142,8 @@
 (defn process [mtcs path]
   (let [node (mtcs path)]
     (cond
-      (> (:visited node) 100)
-      (filter (fn [[p v]] (= 1 (count p))) mtcs)
+      (>= (:visited node) 4000)
+      (clojure.string/join \newline (map (fn [[x y]] (str x \tab (double (/ (:score y) (:visited y))))) (select-keys mtcs (:children (mtcs [])))))
 
       (:terminal node)
       (recur (backprop mtcs path (:result node)) [])
@@ -157,7 +157,7 @@
       :else (let [child-path (best-child mtcs path)]
               (recur mtcs child-path)))))
 
-(time (loop [root {[] {:visited 0 :score 0 :player 1 :state (init)}}]
+(time (loop [root {[] {:visited 0 :score 0 :player 2 :state (init)}}]
    (process root [])))
 
 (defn simulate [state]
