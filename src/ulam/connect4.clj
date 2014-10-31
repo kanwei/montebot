@@ -1,8 +1,6 @@
 (ns ulam.connect4
-  (require [ulam.core :as ulam]
-           [criterium.core :as crit]
-           [io.aviso.repl :as repl]
-           [clojure.math.numeric-tower :as math]))
+  (:require clojure.set
+   #_[ulam.core :as ulam]))
 
 (defn initial-state []
   {:active :p1
@@ -10,6 +8,8 @@
    :p2 #{}})
 
 (def cols (vec (range 7)))
+
+(def MAX_VALUE 9999999)
 
 (defn highest-column [xs col]
   (let [max-col (filter #(= col (mod % 7)) xs)]
@@ -81,13 +81,11 @@
 
 (defn uct [node parent-visits]
   (if (zero? (:visited node))
-    Long/MAX_VALUE
+    MAX_VALUE
     (+ (/ (:score node)
           (:visited node))
        (Math/sqrt (/ (* 2 (Math/log parent-visits))
                      (:visited node))))))
-
-#_(crit/quick-bench (uct {:score 3.0 :visited 10} 100))
 
 (defn update-node [root path result]
   (-> root
@@ -150,7 +148,7 @@
 (defn mtcs-tree [mtcs path initial-path]
   (let [node (mtcs path)]
     (cond
-      (>= (:visited node) 2000)
+      (>= (:visited node) 500)
       mtcs
       ; Terminal nodes are ones that have reached a final state and only return one result
       (:terminal node)
@@ -171,9 +169,10 @@
 #_(time (loop [root {[] {:visited 0 :score 0 :state (initial-state)}}]
         (best-child (mtcs-tree root []) [])))
 
-(most-visited-child (mtcs-tree {[0 1 2] {:visited 0 :score 0 :state (state-from-moves (initial-state) [0 1 2])}} [0 1 2] [0 1 2]) [0 1 2])
+#_(most-visited-child (mtcs-tree {[0 1 2] {:visited 0 :score 0 :state (state-from-moves (initial-state) [0 1 2])}} [0 1 2] [0 1 2]) [0 1 2])
 
 (defn next-move [move-list]
   (most-visited-child (mtcs-tree {move-list {:visited 0 :score 0 :state (state-from-moves (initial-state) move-list)}} move-list move-list) move-list))
 
-(next-move [])
+#_(next-move [3])
+

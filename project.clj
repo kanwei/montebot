@@ -7,6 +7,7 @@
                  [org.clojure/clojurescript "0.0-2371"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [criterium "0.4.3"]
+                 [reagent "0.4.3"]
                  [com.taoensso/timbre "3.3.1"]
                  [org.clojure/math.numeric-tower "0.0.4"]]
   :plugins [[lein-cljsbuild "1.0.3"]]
@@ -14,8 +15,8 @@
     :builds [{:id "ulam"
               :source-paths ["src"]
               :compiler {
-                :output-to "ulam.js"
-                :output-dir "out"
+                :output-to "resources/public/js/cljs.js"
+                :output-dir "resources/public/js/cljs"
                 :optimizations :none
                 :source-map true}}]}
   :main ^:skip-aot ulam.core
