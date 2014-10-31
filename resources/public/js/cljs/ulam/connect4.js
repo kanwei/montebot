@@ -6,7 +6,7 @@ ulam.connect4.initial_state = (function initial_state(){return new cljs.core.Per
 });
 ulam.connect4.cols = cljs.core.vec.call(null,cljs.core.range.call(null,(7)));
 ulam.connect4.MAX_VALUE = (9999999);
-ulam.connect4.highest_column = (function highest_column(xs,col){var max_col = cljs.core.filter.call(null,(function (p1__25961_SHARP_){return cljs.core._EQ_.call(null,col,cljs.core.mod.call(null,p1__25961_SHARP_,(7)));
+ulam.connect4.highest_column = (function highest_column(xs,col){var max_col = cljs.core.filter.call(null,(function (p1__27607_SHARP_){return cljs.core._EQ_.call(null,col,cljs.core.mod.call(null,p1__27607_SHARP_,(7)));
 }),xs);if(cljs.core.empty_QMARK_.call(null,max_col))
 {return col;
 } else
@@ -46,7 +46,7 @@ ulam.connect4.check_terminal = (function check_terminal(state){if(cljs.core.trut
 }
 }
 });
-ulam.connect4.perform_move = (function perform_move(state,move){return cljs.core.assoc.call(null,cljs.core.update_in.call(null,state,new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"active","active",1895962068).cljs$core$IFn$_invoke$arity$1(state)], null),(function (p1__25962_SHARP_){return cljs.core.conj.call(null,p1__25962_SHARP_,move);
+ulam.connect4.perform_move = (function perform_move(state,move){return cljs.core.assoc.call(null,cljs.core.update_in.call(null,state,new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"active","active",1895962068).cljs$core$IFn$_invoke$arity$1(state)], null),(function (p1__27608_SHARP_){return cljs.core.conj.call(null,p1__27608_SHARP_,move);
 })),new cljs.core.Keyword(null,"active","active",1895962068),((cljs.core._EQ_.call(null,new cljs.core.Keyword(null,"p1","p1",-936759954),new cljs.core.Keyword(null,"active","active",1895962068).cljs$core$IFn$_invoke$arity$1(state)))?new cljs.core.Keyword(null,"p2","p2",905500641):new cljs.core.Keyword(null,"p1","p1",-936759954)));
 });
 ulam.connect4.uct = (function uct(node,parent_visits){if((new cljs.core.Keyword(null,"visited","visited",-1610853875).cljs$core$IFn$_invoke$arity$1(node) === (0)))
@@ -76,24 +76,22 @@ if((tree.call(null,path) == null))
 {return tree;
 } else
 {{
-var G__25963 = ulam.connect4.update_node.call(null,tree,path,result);
-var G__25964 = ((!(cljs.core.empty_QMARK_.call(null,path)))?cljs.core.subvec.call(null,path,(0),(cljs.core.count.call(null,path) - (1))):null);
-var G__25965 = result;
-tree = G__25963;
-path = G__25964;
-result = G__25965;
+var G__27609 = ulam.connect4.update_node.call(null,tree,path,result);
+var G__27610 = ((!(cljs.core.empty_QMARK_.call(null,path)))?cljs.core.subvec.call(null,path,(0),(cljs.core.count.call(null,path) - (1))):null);
+var G__27611 = result;
+tree = G__27609;
+path = G__27610;
+result = G__27611;
 continue;
 }
 }
 break;
 }
 });
-ulam.connect4.next_player = (function next_player(player){return ((3) - player);
-});
-ulam.connect4.best_child = (function best_child(mtcs,path){return cljs.core.last.call(null,cljs.core.sort_by.call(null,(function (p1__25966_SHARP_){return ulam.connect4.uct.call(null,mtcs.call(null,p1__25966_SHARP_),new cljs.core.Keyword(null,"visited","visited",-1610853875).cljs$core$IFn$_invoke$arity$1(mtcs.call(null,path)));
+ulam.connect4.best_child = (function best_child(mtcs,path){return cljs.core.last.call(null,cljs.core.sort_by.call(null,(function (p1__27612_SHARP_){return ulam.connect4.uct.call(null,mtcs.call(null,p1__27612_SHARP_),new cljs.core.Keyword(null,"visited","visited",-1610853875).cljs$core$IFn$_invoke$arity$1(mtcs.call(null,path)));
 }),new cljs.core.Keyword(null,"children","children",-940561982).cljs$core$IFn$_invoke$arity$1(mtcs.call(null,path))));
 });
-ulam.connect4.most_visited_child = (function most_visited_child(mtcs,path){return cljs.core.last.call(null,cljs.core.sort_by.call(null,(function (p1__25967_SHARP_){return new cljs.core.Keyword(null,"visited","visited",-1610853875).cljs$core$IFn$_invoke$arity$1(mtcs.call(null,p1__25967_SHARP_));
+ulam.connect4.most_visited_child = (function most_visited_child(mtcs,path){return cljs.core.last.call(null,cljs.core.sort_by.call(null,(function (p1__27613_SHARP_){return new cljs.core.Keyword(null,"visited","visited",-1610853875).cljs$core$IFn$_invoke$arity$1(mtcs.call(null,p1__27613_SHARP_));
 }),new cljs.core.Keyword(null,"children","children",-940561982).cljs$core$IFn$_invoke$arity$1(mtcs.call(null,path))));
 });
 ulam.connect4.simulate_game = (function simulate_game(state){while(true){
@@ -101,8 +99,8 @@ var temp__4386__auto__ = ulam.connect4.check_terminal.call(null,state);if(cljs.c
 {var result = temp__4386__auto__;return result;
 } else
 {var move = cljs.core.rand_nth.call(null,ulam.connect4.valid_moves.call(null,state));{
-var G__25968 = ulam.connect4.perform_move.call(null,state,move);
-state = G__25968;
+var G__27614 = ulam.connect4.perform_move.call(null,state,move);
+state = G__27614;
 continue;
 }
 }
@@ -114,10 +112,10 @@ if(cljs.core.empty_QMARK_.call(null,move_list))
 {return state;
 } else
 {{
-var G__25969 = ulam.connect4.perform_move.call(null,state,cljs.core.first.call(null,move_list));
-var G__25970 = cljs.core.rest.call(null,move_list);
-state = G__25969;
-move_list = G__25970;
+var G__27615 = ulam.connect4.perform_move.call(null,state,cljs.core.first.call(null,move_list));
+var G__27616 = cljs.core.rest.call(null,move_list);
+state = G__27615;
+move_list = G__27616;
 continue;
 }
 }
@@ -125,7 +123,7 @@ break;
 }
 });
 ulam.connect4.generate_node = (function generate_node(mtcs,path,state){return cljs.core.reduce.call(null,(function (coll,move){var new_state = ulam.connect4.perform_move.call(null,state,move);var new_path = cljs.core.conj.call(null,path,move);var terminal_result = ulam.connect4.check_terminal.call(null,new_state);return cljs.core.assoc.call(null,cljs.core.update_in.call(null,coll,new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [path,new cljs.core.Keyword(null,"children","children",-940561982)], null),((function (new_state,new_path,terminal_result){
-return (function (p1__25971_SHARP_){return cljs.core.conj.call(null,p1__25971_SHARP_,new_path);
+return (function (p1__27617_SHARP_){return cljs.core.conj.call(null,p1__27617_SHARP_,new_path);
 });})(new_state,new_path,terminal_result))
 ),new_path,(cljs.core.truth_(terminal_result)?new cljs.core.PersistentArrayMap(null, 5, [new cljs.core.Keyword(null,"state","state",-1988618099),new_state,new cljs.core.Keyword(null,"terminal","terminal",-927870592),true,new cljs.core.Keyword(null,"visited","visited",-1610853875),(0),new cljs.core.Keyword(null,"score","score",-1963588780),(0),new cljs.core.Keyword(null,"result","result",1415092211),terminal_result], null):new cljs.core.PersistentArrayMap(null, 3, [new cljs.core.Keyword(null,"state","state",-1988618099),new_state,new cljs.core.Keyword(null,"visited","visited",-1610853875),(0),new cljs.core.Keyword(null,"score","score",-1963588780),(0)], null)));
 }),mtcs,ulam.connect4.valid_moves.call(null,state));
@@ -136,33 +134,33 @@ var node = mtcs.call(null,path);if((new cljs.core.Keyword(null,"visited","visite
 } else
 {if(cljs.core.truth_(new cljs.core.Keyword(null,"terminal","terminal",-927870592).cljs$core$IFn$_invoke$arity$1(node)))
 {{
-var G__25972 = ulam.connect4.backprop.call(null,mtcs,path,new cljs.core.Keyword(null,"result","result",1415092211).cljs$core$IFn$_invoke$arity$1(node));
-var G__25973 = initial_path;
-var G__25974 = initial_path;
-mtcs = G__25972;
-path = G__25973;
-initial_path = G__25974;
+var G__27618 = ulam.connect4.backprop.call(null,mtcs,path,new cljs.core.Keyword(null,"result","result",1415092211).cljs$core$IFn$_invoke$arity$1(node));
+var G__27619 = initial_path;
+var G__27620 = initial_path;
+mtcs = G__27618;
+path = G__27619;
+initial_path = G__27620;
 continue;
 }
 } else
 {if((new cljs.core.Keyword(null,"visited","visited",-1610853875).cljs$core$IFn$_invoke$arity$1(node) === (0)))
 {{
-var G__25975 = ulam.connect4.backprop.call(null,ulam.connect4.generate_node.call(null,mtcs,path,new cljs.core.Keyword(null,"state","state",-1988618099).cljs$core$IFn$_invoke$arity$1(node)),path,ulam.connect4.simulate_game.call(null,new cljs.core.Keyword(null,"state","state",-1988618099).cljs$core$IFn$_invoke$arity$1(node)));
-var G__25976 = initial_path;
-var G__25977 = initial_path;
-mtcs = G__25975;
-path = G__25976;
-initial_path = G__25977;
+var G__27621 = ulam.connect4.backprop.call(null,ulam.connect4.generate_node.call(null,mtcs,path,new cljs.core.Keyword(null,"state","state",-1988618099).cljs$core$IFn$_invoke$arity$1(node)),path,ulam.connect4.simulate_game.call(null,new cljs.core.Keyword(null,"state","state",-1988618099).cljs$core$IFn$_invoke$arity$1(node)));
+var G__27622 = initial_path;
+var G__27623 = initial_path;
+mtcs = G__27621;
+path = G__27622;
+initial_path = G__27623;
 continue;
 }
 } else
 {var child_path = ulam.connect4.best_child.call(null,mtcs,path);{
-var G__25978 = mtcs;
-var G__25979 = child_path;
-var G__25980 = initial_path;
-mtcs = G__25978;
-path = G__25979;
-initial_path = G__25980;
+var G__27624 = mtcs;
+var G__27625 = child_path;
+var G__27626 = initial_path;
+mtcs = G__27624;
+path = G__27625;
+initial_path = G__27626;
 continue;
 }
 

@@ -100,9 +100,6 @@
            result)
     ))
 
-(defn next-player [player]
-  (- 3 player))
-
 (defn best-child [mtcs path]
   (last (sort-by #(uct (mtcs %) (:visited (mtcs path)))
                  (:children (mtcs path)))))
