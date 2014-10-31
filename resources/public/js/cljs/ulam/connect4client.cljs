@@ -5,11 +5,12 @@
 
 (enable-console-print!)
 
-#_(println (connect4/next-move [0]))
-
 (def moves (atom []))
 
-(range (* 6 7))
+(defn player-move [move]
+  (swap! moves conj move)
+  (reset! moves (connect4/next-move @moves)))
+
 
 (defn position-state [pos]
   (let [player (get (zipmap @moves (cycle [:p1 :p2])) pos)]
@@ -36,10 +37,6 @@
         [:td.grid (position-state (+ column (* row 7)))])
       ])
    ])
-
-(defn player-move [move]
-  (swap! moves conj move)
-  (reset! moves (connect4/next-move @moves)))
 
 (defn game-values []
   (if-let [result (connect4/check-terminal (connect4/state-from-moves (connect4/initial-state) @moves))]

@@ -66,14 +66,6 @@
         (check-win (:p2 state)) :p2
         (empty? (valid-moves state)) :draw))
 
-#_(crit/quick-bench (check-win #{1 3 4 12 20 23}))
-
-(defn format-stats [stats]
-  (println "===============================")
-  (doseq [[move stats] (sort stats)]
-    (println move (format "%.5f" (try (double (/ (:total stats) (:n stats)))
-                                      (catch Exception e 0.0))))))
-
 (defn perform-move [state move]
   (-> state
       (update-in [(:active state)] #(conj % move))
@@ -98,10 +90,10 @@
                                  (not= result player) 1
                                  )))))))
 
-(defn backprop [root path result]
-  (if (nil? (root path))
-    root
-    (recur (update-node root path result)
+(defn backprop [tree path result]
+  (if (nil? (tree path))
+    tree
+    (recur (update-node tree path result)
            (if-not (empty? path)
              (subvec path 0 (dec (count path)))
              nil)
@@ -148,7 +140,7 @@
 (defn mtcs-tree [mtcs path initial-path]
   (let [node (mtcs path)]
     (cond
-      (>= (:visited node) 500)
+      (>= (:visited node) 2000)
       mtcs
       ; Terminal nodes are ones that have reached a final state and only return one result
       (:terminal node)
@@ -166,13 +158,8 @@
       :else (let [child-path (best-child mtcs path)]
               (recur mtcs child-path initial-path)))))
 
-#_(time (loop [root {[] {:visited 0 :score 0 :state (initial-state)}}]
-        (best-child (mtcs-tree root []) [])))
-
-#_(most-visited-child (mtcs-tree {[0 1 2] {:visited 0 :score 0 :state (state-from-moves (initial-state) [0 1 2])}} [0 1 2] [0 1 2]) [0 1 2])
-
 (defn next-move [move-list]
   (most-visited-child (mtcs-tree {move-list {:visited 0 :score 0 :state (state-from-moves (initial-state) move-list)}} move-list move-list) move-list))
 
-#_(next-move [3])
+#_(next-move [])
 

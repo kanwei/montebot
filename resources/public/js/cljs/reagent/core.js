@@ -176,20 +176,20 @@ var atom = null;
 var atom__1 = (function (x){return reagent.ratom.atom.call(null,x);
 });
 var atom__2 = (function() { 
-var G__11892__delegate = function (x,rest){return cljs.core.apply.call(null,reagent.ratom.atom,x,rest);
+var G__27281__delegate = function (x,rest){return cljs.core.apply.call(null,reagent.ratom.atom,x,rest);
 };
-var G__11892 = function (x,var_args){
+var G__27281 = function (x,var_args){
 var rest = null;if (arguments.length > 1) {
   rest = cljs.core.array_seq(Array.prototype.slice.call(arguments, 1),0);} 
-return G__11892__delegate.call(this,x,rest);};
-G__11892.cljs$lang$maxFixedArity = 1;
-G__11892.cljs$lang$applyTo = (function (arglist__11893){
-var x = cljs.core.first(arglist__11893);
-var rest = cljs.core.rest(arglist__11893);
-return G__11892__delegate(x,rest);
+return G__27281__delegate.call(this,x,rest);};
+G__27281.cljs$lang$maxFixedArity = 1;
+G__27281.cljs$lang$applyTo = (function (arglist__27282){
+var x = cljs.core.first(arglist__27282);
+var rest = cljs.core.rest(arglist__27282);
+return G__27281__delegate(x,rest);
 });
-G__11892.cljs$core$IFn$_invoke$arity$variadic = G__11892__delegate;
-return G__11892;
+G__27281.cljs$core$IFn$_invoke$arity$variadic = G__27281__delegate;
+return G__27281;
 })()
 ;
 atom = function(x,var_args){
@@ -259,9 +259,9 @@ var args = null;if (arguments.length > 1) {
   args = cljs.core.array_seq(Array.prototype.slice.call(arguments, 1),0);} 
 return partial__delegate.call(this,f,args);};
 partial.cljs$lang$maxFixedArity = 1;
-partial.cljs$lang$applyTo = (function (arglist__11894){
-var f = cljs.core.first(arglist__11894);
-var args = cljs.core.rest(arglist__11894);
+partial.cljs$lang$applyTo = (function (arglist__27283){
+var f = cljs.core.first(arglist__27283);
+var args = cljs.core.rest(arglist__27283);
 return partial__delegate(f,args);
 });
 partial.cljs$core$IFn$_invoke$arity$variadic = partial__delegate;
