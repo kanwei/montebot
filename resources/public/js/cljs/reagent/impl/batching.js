@@ -34,13 +34,13 @@ reagent.impl.batching.compare_levels = (function compare_levels(c1,c2){return ((
 reagent.impl.batching.run_queue = (function run_queue(a){a.sort(reagent.impl.batching.compare_levels);
 var n__4510__auto__ = a.length;var i = (0);while(true){
 if((i < n__4510__auto__))
-{var c_28946 = (a[i]);if(cljs.core.truth_((c_28946["cljsIsDirty"])))
-{(c_28946["forceUpdate"])();
+{var c_29074 = (a[i]);if(cljs.core.truth_((c_29074["cljsIsDirty"])))
+{(c_29074["forceUpdate"])();
 } else
 {}
 {
-var G__28947 = (i + (1));
-i = G__28947;
+var G__29075 = (i + (1));
+i = G__29075;
 continue;
 }
 } else
@@ -91,7 +91,7 @@ return reagent.impl.batching.render_queue.queue_render(c);
 });
 reagent.impl.batching.mark_rendered = (function mark_rendered(c){return (c["cljsIsDirty"] = false);
 });
-reagent.impl.batching.is_reagent_component = (function is_reagent_component(c){var G__28949 = c;var G__28949__$1 = (((G__28949 == null))?null:(G__28949["props"]));var G__28949__$2 = (((G__28949__$1 == null))?null:(G__28949__$1["argv"]));return G__28949__$2;
+reagent.impl.batching.is_reagent_component = (function is_reagent_component(c){var G__29077 = c;var G__29077__$1 = (((G__29077 == null))?null:(G__29077["props"]));var G__29077__$2 = (((G__29077__$1 == null))?null:(G__29077__$1["argv"]));return G__29077__$2;
 });
 reagent.impl.batching.run_reactively = (function run_reactively(c,run){if(cljs.core.truth_(reagent.impl.batching.is_reagent_component.call(null,c)))
 {} else
@@ -111,7 +111,7 @@ return res;
 {return reagent.ratom.run.call(null,rat);
 }
 });
-reagent.impl.batching.dispose = (function dispose(c){var G__28951_28952 = (c["cljsRatom"]);var G__28951_28953__$1 = (((G__28951_28952 == null))?null:reagent.ratom.dispose_BANG_.call(null,G__28951_28952));return reagent.impl.batching.mark_rendered.call(null,c);
+reagent.impl.batching.dispose = (function dispose(c){var G__29079_29080 = (c["cljsRatom"]);var G__29079_29081__$1 = (((G__29079_29080 == null))?null:reagent.ratom.dispose_BANG_.call(null,G__29079_29080));return reagent.impl.batching.mark_rendered.call(null,c);
 });
 
 //# sourceMappingURL=batching.js.map

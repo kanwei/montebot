@@ -9,8 +9,7 @@
 
 (defn player-move [move]
   (swap! moves conj move)
-  (reset! moves (connect4/next-move @moves)))
-
+  (reset! moves (connect4/next-move @moves 1000)))
 
 (defn position-state [pos]
   (let [player (get (zipmap @moves (cycle [:p1 :p2])) pos)]
@@ -34,13 +33,15 @@
    (for [row (range 5 -1 -1)]
      [:tr
       (for [column (range 7)]
-        [:td.grid (position-state (+ column (* row 7)))])
+        [:td.grid
+         [:span.pull-right (+ column (* row 7))]
+         (position-state (+ column (* row 7)))])
       ])
    ])
 
 (defn game-values []
   (if-let [result (connect4/check-terminal (connect4/state-from-moves (connect4/initial-state) @moves))]
-    [:h1 (str "The game is: " result)])
+    [:h1 (str "The game is: " result @moves)])
   )
 
 (defn app []

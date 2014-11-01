@@ -1,7 +1,8 @@
 goog.addDependency("base.js", ['goog'], []);
 goog.addDependency("../cljs/core.js", ['cljs.core'], ['goog.string', 'goog.object', 'goog.string.StringBuffer', 'goog.array']);
+goog.addDependency("../clojure/core/reducers.js", ['clojure.core.reducers'], ['cljs.core']);
 goog.addDependency("../clojure/set.js", ['clojure.set'], ['cljs.core']);
-goog.addDependency("../ulam/connect4.js", ['ulam.connect4'], ['cljs.core', 'clojure.set']);
+goog.addDependency("../ulam/connect4.js", ['ulam.connect4'], ['clojure.core.reducers', 'cljs.core', 'clojure.set']);
 goog.addDependency("../reagent/interop.js", ['reagent.interop'], ['cljs.core']);
 goog.addDependency("../reagent/debug.js", ['reagent.debug'], ['cljs.core']);
 goog.addDependency("../clojure/string.js", ['clojure.string'], ['goog.string', 'cljs.core', 'goog.string.StringBuffer']);
