@@ -1,6 +1,8 @@
 (ns ulam.connect4client
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require clojure.set
             [reagent.core :as reagent :refer [atom]]
+            [cljs.core.async :as async :refer [>! <! chan]]
             [ulam.connect4 :as connect4]))
 
 (enable-console-print!)
@@ -28,13 +30,13 @@
         [:td
          (if-let [n (first (filter #(= column (mod % 7)) moves))]
            [:button
-            {:on-click #(player-move n)} "PLAY"])]))
+            {:on-click #(player-move n)} "Place"])]))
     ]
    (for [row (range 5 -1 -1)]
      [:tr
       (for [column (range 7)]
         [:td.grid
-         [:span.pull-right (+ column (* row 7))]
+         #_[:span.pull-right (+ column (* row 7))]
          (position-state (+ column (* row 7)))])
       ])
    ])

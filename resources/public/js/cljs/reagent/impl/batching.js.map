@@ -17,9 +17,9 @@
   "_", "q", "reagent.impl.batching/render-queue",
   "reagent.impl.batching/flush", "reagent.impl.batching/queue-render",
   "reagent.impl.batching/mark-rendered",
-  "reagent.impl.batching/is-reagent-component", "G__29077",
+  "reagent.impl.batching/is-reagent-component", "G__13084",
   "reagent.impl.batching/run-reactively", "run", "js/Error",
   "cljs.core/pr-str", "rat", "res", "reagent.ratom/capture-derefed",
   "derefed", "reagent.ratom/captured", "reagent.ratom/make-reaction",
-  "reagent.ratom/run", "reagent.impl.batching/dispose", "G__29079",
+  "reagent.ratom/run", "reagent.impl.batching/dispose", "G__13086",
   "reagent.ratom/dispose!"]}

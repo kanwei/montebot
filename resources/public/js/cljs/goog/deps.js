@@ -5,3 +5,6 @@ goog.addDependency("debug/error.js", ['goog.debug.Error'], []);
 goog.addDependency("dom/nodetype.js", ['goog.dom.NodeType'], []);
 goog.addDependency("asserts/asserts.js", ['goog.asserts', 'goog.asserts.AssertionError'], ['goog.debug.Error', 'goog.dom.NodeType', 'goog.string']);
 goog.addDependency("array/array.js", ['goog.array', 'goog.array.ArrayLike'], ['goog.asserts']);
+goog.addDependency("debug/entrypointregistry.js", ['goog.debug.EntryPointMonitor', 'goog.debug.entryPointRegistry'], ['goog.asserts']);
+goog.addDependency("functions/functions.js", ['goog.functions'], []);
+goog.addDependency("async/nexttick.js", ['goog.async.nextTick', 'goog.async.throwException'], ['goog.debug.entryPointRegistry', 'goog.functions']);

@@ -68,7 +68,6 @@
     [(+ column (* x 7)) (+ column (* (+ 1 x) 7)) (+ column (* (+ 2 x) 7)) (+ column (* (+ 3 x) 7))]
     ))
 
-verticals
 (def diagonals
   [
    [0 8 16 24]
@@ -118,14 +117,14 @@ verticals
                       victory-positions)))
 
 (defn check-win [board]
-  (if (>= (count board) 4)
-    (loop [vic-pos-left victory-positions]
-      (if-let [vic-pos (first vic-pos-left)]
-        (if (= vic-pos (bit-and vic-pos (coll-to-bitfield board)))
-          true
-          (recur (rest vic-pos-left)))))))
+  (let [board-bitfield (coll-to-bitfield board)]
+    (if (>= (count board) 4)
+     (loop [vic-pos-left victory-positions]
+       (if-let [vic-pos (first vic-pos-left)]
+         (if (= vic-pos (bit-and vic-pos board-bitfield))
+           true
+           (recur (rest vic-pos-left))))))))
 
-(check-win [2 6 16 17 24 31])
 (defn check-terminal [state]
   (cond (check-win (:p1 state)) :p1
         (check-win (:p2 state)) :p2
@@ -188,9 +187,6 @@ verticals
     state
     (recur (perform-move state (first move-list)) (rest move-list))))
 
-(def buggy (state-from-moves (initial-state) [3 2 9 16 10 17 4 11 18 23 5 6 12 30 37 19 24 26 25 33 40 1 8 15 32 39 31 38 13 20 27 0]))
-
-(check-terminal buggy)
 (defn generate-node [mtcs path state]
   (reduce (fn [coll move]
             (let [new-state (perform-move state move)
