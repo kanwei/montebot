@@ -31,31 +31,6 @@
   (filter identity (map (partial highest-column (:occupied state))
                         cols)))
 
-(defn check-nw [pos bits]
-  (and
-    (>= (mod pos 7) 3)
-    (< pos 21)
-    (= 3 (count (clojure.set/intersection bits
-                                          #{(+ pos 6) (+ pos 12) (+ pos 18)})))))
-
-(defn check-north [pos bits]
-  (and (< pos 21)
-       (= 3 (count (clojure.set/intersection bits
-                                             #{(+ pos 7) (+ pos 14) (+ pos 21)})))))
-
-(defn check-ne [pos bits]
-  (and
-    (< (mod pos 7) 4)
-    (< pos 21)
-    (= 3 (count (clojure.set/intersection bits
-                                          #{(+ pos 8) (+ pos 16) (+ pos 24)})))))
-
-(defn check-east [pos bits]
-  (and
-    (< (mod pos 7) 4)
-    (= 3 (count (clojure.set/intersection bits
-                                          #{(+ pos 1) (+ pos 2) (+ pos 3)})))))
-
 (def horizontals
   (for [row (range 6)
         x (range 4)]
@@ -109,21 +84,18 @@
           v
           ))
 
-(def victory-positions (mapv coll-to-bitfield (concat verticals horizontals diagonals)))
-
-(defn check-win-2 [board]
-  (some identity (map (fn [vic-pos]
-                        (= vic-pos (bit-and vic-pos (coll-to-bitfield board))))
-                      victory-positions)))
+(def victory-positions (longs (long-array (map coll-to-bitfield (concat verticals horizontals diagonals)))))
 
 (defn check-win [board]
-  (let [board-bitfield (coll-to-bitfield board)]
-    (if (>= (count board) 4)
-     (loop [vic-pos-left victory-positions]
-       (if-let [vic-pos (first vic-pos-left)]
-         (if (= vic-pos (bit-and vic-pos board-bitfield))
-           true
-           (recur (rest vic-pos-left))))))))
+  (if (>= (count board) 4)
+    (let [board-bitfield (coll-to-bitfield board)]
+      (areduce ^longs victory-positions
+               idx
+               ret
+               false
+               (or ret (= (aget ^longs victory-positions idx) (bit-and (aget ^longs victory-positions idx) board-bitfield)))))))
+
+;(crit/quick-bench (check-win [0 1 2 3]))
 
 (defn check-terminal [state]
   (cond (check-win (:p1 state)) :p1
@@ -230,5 +202,5 @@
                                  move-list
                                  iterations) move-list))
 
-;(next-move [] 2000)
+;(time (next-move [] 2000))
 

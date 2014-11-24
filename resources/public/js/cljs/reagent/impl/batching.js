@@ -34,13 +34,13 @@ reagent.impl.batching.compare_levels = (function compare_levels(c1,c2){return ((
 reagent.impl.batching.run_queue = (function run_queue(a){a.sort(reagent.impl.batching.compare_levels);
 var n__4510__auto__ = a.length;var i = (0);while(true){
 if((i < n__4510__auto__))
-{var c_13081 = (a[i]);if(cljs.core.truth_((c_13081["cljsIsDirty"])))
-{(c_13081["forceUpdate"])();
+{var c_180341 = (a[i]);if(cljs.core.truth_((c_180341["cljsIsDirty"])))
+{(c_180341["forceUpdate"])();
 } else
 {}
 {
-var G__13082 = (i + (1));
-i = G__13082;
+var G__180342 = (i + (1));
+i = G__180342;
 continue;
 }
 } else
@@ -91,7 +91,7 @@ return reagent.impl.batching.render_queue.queue_render(c);
 });
 reagent.impl.batching.mark_rendered = (function mark_rendered(c){return (c["cljsIsDirty"] = false);
 });
-reagent.impl.batching.is_reagent_component = (function is_reagent_component(c){var G__13084 = c;var G__13084__$1 = (((G__13084 == null))?null:(G__13084["props"]));var G__13084__$2 = (((G__13084__$1 == null))?null:(G__13084__$1["argv"]));return G__13084__$2;
+reagent.impl.batching.is_reagent_component = (function is_reagent_component(c){var G__180344 = c;var G__180344__$1 = (((G__180344 == null))?null:(G__180344["props"]));var G__180344__$2 = (((G__180344__$1 == null))?null:(G__180344__$1["argv"]));return G__180344__$2;
 });
 reagent.impl.batching.run_reactively = (function run_reactively(c,run){if(cljs.core.truth_(reagent.impl.batching.is_reagent_component.call(null,c)))
 {} else
@@ -111,7 +111,7 @@ return res;
 {return reagent.ratom.run.call(null,rat);
 }
 });
-reagent.impl.batching.dispose = (function dispose(c){var G__13086_13087 = (c["cljsRatom"]);var G__13086_13088__$1 = (((G__13086_13087 == null))?null:reagent.ratom.dispose_BANG_.call(null,G__13086_13087));return reagent.impl.batching.mark_rendered.call(null,c);
+reagent.impl.batching.dispose = (function dispose(c){var G__180346_180347 = (c["cljsRatom"]);var G__180346_180348__$1 = (((G__180346_180347 == null))?null:reagent.ratom.dispose_BANG_.call(null,G__180346_180347));return reagent.impl.batching.mark_rendered.call(null,c);
 });
 
 //# sourceMappingURL=batching.js.map
