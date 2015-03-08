@@ -1,7 +1,1 @@
-{"version":3,
- "file":
- "/Users/kanwei/Projects/ulam/resources/public/js/cljs/reagent/interop.js",
- "sources":["interop.cljs"],
- "lineCount":6,
- "mappings":";AAAA;;AAEA,wBAAA,xBAAKA",
- "names":["reagent.interop/fvars"]}
+{"version":3,"file":"\/Users\/kanwei\/Projects\/ulam\/resources\/public\/js\/cljs\/reagent\/interop.js","sources":["interop.cljs"],"lineCount":6,"mappings":";AAAA;;AAEA,wBAAA,xBAAKA","names":["reagent.interop\/fvars"]}

@@ -9,16 +9,20 @@
 (ns clojure.string
   (:refer-clojure :exclude [replace reverse])
   (:require [goog.string :as gstring])
-  (:import goog.string.StringBuffer))
+  (:import [goog.string StringBuffer]))
 
 (defn- seq-reverse
   [coll]
   (reduce conj () coll))
 
+(def ^:private re-surrogate-pair
+  (js/RegExp. "([\\uD800-\\uDBFF])([\\uDC00-\\uDFFF])" "g"))
+
 (defn reverse
   "Returns s with its characters reversed."
   [s]
-  (.. s (split "") (reverse) (join "")))
+  (-> (.replace s re-surrogate-pair "$2$1")
+      (.. (split "") (reverse) (join ""))))
 
 (defn replace
   "Replaces all instance of match with replacement in s.
@@ -29,7 +33,7 @@
   [s match replacement]
   (cond (string? match)
         (.replace s (js/RegExp. (gstring/regExpEscape match) "g") replacement)
-        (.hasOwnProperty match "source")
+        (instance? js/RegExp match)
         (.replace s (js/RegExp. (.-source match) "g") replacement)
         :else (throw (str "Invalid match arg: " match))))
 
@@ -44,11 +48,22 @@
 
 (defn join
   "Returns a string of all elements in coll, as returned by (seq coll),
-   separated by an optional separator."
+  separated by an optional separator."
   ([coll]
-     (apply str coll))
+   (loop [sb (StringBuffer.) coll (seq coll)]
+     (if coll
+       (recur (. sb (append (str (first coll)))) (next coll))
+       (.toString sb))))
   ([separator coll]
-     (apply str (interpose separator coll))))
+   (loop [sb (StringBuffer.) coll (seq coll)]
+     (if coll
+       (do
+         (. sb (append (str (first coll))))
+         (let [coll (next coll)]
+           (when-not (nil? coll)
+             (. sb (append separator)))
+           (recur sb coll)))
+       (.toString sb)))))
 
 (defn upper-case
   "Converts string to all upper-case."
