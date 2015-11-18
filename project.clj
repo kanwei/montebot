@@ -10,15 +10,17 @@
                  [reagent "0.5.1"]
                  [com.taoensso/timbre "4.1.4"]
                  [org.clojure/math.numeric-tower "0.0.4"]]
-  :plugins [[lein-cljsbuild "1.1.1"]]
+  :plugins [[lein-cljsbuild "1.1.1"]
+            [lein-figwheel "0.5.0-1"]]
   :cljsbuild {
-    :builds [{:id "ulam"
-              :source-paths ["src"]
-              :compiler {
-                :output-to "resources/public/js/cljs.js"
-                :output-dir "resources/public/js/cljs"
-                :optimizations :none
-                :source-map true}}]}
+              :builds [{:id "ulam"
+                        :source-paths ["src"]
+                        :compiler {
+                                   :figwheel true
+                                   :output-to "resources/public/js/cljs.js"
+                                   :output-dir "resources/public/js/cljs"
+                                   :optimizations :none
+                                   :source-map true}}]}
   :main ^:skip-aot ulam.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})

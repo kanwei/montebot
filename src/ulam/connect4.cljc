@@ -1,10 +1,12 @@
 (ns ulam.connect4
+  #?(:cljs (:import [goog.math Long]))
   (:require clojure.set
-            #_[criterium.core :as crit]
-            [clojure.core.reducers :as r]
-            #_[ulam.core :as ulam]))
+    #?(:clj [criterium.core :as crit])
 
-(set! *warn-on-reflection* true)
+    #_[ulam.core :as ulam]))
+
+#?(:clj (set! *warn-on-reflection* true))
+#?(:cljs (enable-console-print!))
 
 (defn initial-state []
   {:active :p1
@@ -79,8 +81,10 @@
 
 (defn coll-to-bitfield [v]
   (reduce (fn [acc x]
-            (bit-set acc x))
-          0
+            #?(:cljs (.or (.shiftLeft (Long. 1) x) acc)
+               :clj (bit-set acc x))
+            )
+          (Long. 0)
           v
           ))
 
@@ -89,11 +93,12 @@
 (defn check-win [board]
   (if (>= (count board) 4)
     (let [board-bitfield (coll-to-bitfield board)]
+      ; Check the board state against each of the winning positions
       (areduce ^longs victory-positions
-               idx
-               ret
-               false
-               (or ret (= (aget ^longs victory-positions idx) (bit-and (aget ^longs victory-positions idx) board-bitfield)))))))
+               idx, ret, false
+               (or ret
+                   (.equals (aget victory-positions idx)
+                            (.and (aget victory-positions idx) board-bitfield)))))))
 
 ;(crit/quick-bench (check-win [0 1 2 3]))
 
@@ -122,10 +127,10 @@
       (update-in [path :score]
                  (fn [x] (+ x (let [player (get-in root [path :state :active])]
                                 (cond
-                                 (= result :draw) 0.5
-                                 (= result player) 0
-                                 (not= result player) 1
-                                 )))))))
+                                  (= result :draw) 0.5
+                                  (= result player) 0
+                                  (not= result player) 1
+                                  )))))))
 
 (defn backprop [tree path result]
   (if (nil? (tree path))
@@ -167,9 +172,9 @@
               (-> coll
                   (update-in [path :children] #(conj % new-path))
                   (assoc new-path
-                           (if terminal-result
-                             {:state new-state :terminal true :visited 0 :score 0 :result terminal-result}
-                             {:state new-state :visited 0 :score 0}))))
+                         (if terminal-result
+                           {:state new-state :terminal true :visited 0 :score 0 :result terminal-result}
+                           {:state new-state :visited 0 :score 0}))))
             )
           mtcs
           (valid-moves state)))

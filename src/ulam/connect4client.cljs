@@ -11,7 +11,7 @@
 
 (defn player-move [move]
   (swap! moves conj move)
-  (reset! moves (connect4/next-move @moves 500)))
+  (reset! moves (connect4/next-move @moves 1000)))
 
 (defn position-state [pos]
   (let [player (get (zipmap @moves (cycle [:p1 :p2])) pos)]
@@ -42,8 +42,10 @@
    ])
 
 (defn game-values []
-  (if-let [result (connect4/check-terminal (connect4/state-from-moves (connect4/initial-state) @moves))]
-    [:h1 (str "The game is: " result " " (connect4/state-from-moves (connect4/initial-state) @moves))])
+  [:div
+   [:div (str @moves)]
+   (if-let [result (connect4/check-terminal (connect4/state-from-moves (connect4/initial-state) @moves))]
+     [:h1 (str "The game is: " result " " (connect4/state-from-moves (connect4/initial-state) @moves))])]
   )
 
 (defn app []
