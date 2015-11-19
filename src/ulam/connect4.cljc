@@ -12,9 +12,7 @@
   {:active :p1
    :occupied []
    :p1 []
-   :p1bits 0
-   :p2 []
-   :p2bits 0})
+   :p2 []})
 
 (def cols (vec (range 7)))
 
@@ -36,14 +34,12 @@
 (def horizontals
   (for [row (range 6)
         x (range 4)]
-    (range (+ x (* row 7)) (+ x 4 (* row 7)))
-    ))
+    (range (+ x (* row 7)) (+ x 4 (* row 7)))))
 
 (def verticals
   (for [column (range 7)
         x (range 3)]
-    [(+ column (* x 7)) (+ column (* (+ 1 x) 7)) (+ column (* (+ 2 x) 7)) (+ column (* (+ 3 x) 7))]
-    ))
+    [(+ column (* x 7)) (+ column (* (+ 1 x) 7)) (+ column (* (+ 2 x) 7)) (+ column (* (+ 3 x) 7))]))
 
 (def diagonals
   [
@@ -201,11 +197,17 @@
       :else (let [child-path (best-child mtcs path)]
               (recur mtcs child-path initial-path iterations)))))
 
-(defn next-move [move-list iterations]
-  (most-visited-child (mtcs-tree {move-list {:visited 0 :score 0 :state (state-from-moves (initial-state) move-list)}}
-                                 move-list
-                                 move-list
-                                 iterations) move-list))
+(defn next-move [move-history n-iterations]
+  (most-visited-child (mtcs-tree {move-history {:visited 0 :score 0 :state (state-from-moves (initial-state) move-history)}}
+                                 move-history
+                                 move-history
+                                 n-iterations) move-history))
+
+(defn next-move-with-state [state move-history n-iterations]
+  (most-visited-child (mtcs-tree {move-history {:visited 0 :score 0 :state state}}
+                                 move-history
+                                 move-history
+                                 n-iterations) move-history))
 
 ;(time (next-move [] 2000))
 

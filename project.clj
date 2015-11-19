@@ -7,6 +7,7 @@
                  [org.clojure/clojurescript "1.7.170"]
                  [org.clojure/core.async "0.2.374"]
                  [criterium "0.4.3"]
+                 [re-frame "0.5.0"]
                  [reagent "0.5.1"]
                  [com.taoensso/timbre "4.1.4"]
                  [org.clojure/math.numeric-tower "0.0.4"]]
