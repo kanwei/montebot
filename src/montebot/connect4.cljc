@@ -1,6 +1,8 @@
 (ns montebot.connect4
   #?(:cljs (:import [goog.math Long]))
-  (:require clojure.set))
+  (:require clojure.set
+    #?(:clj
+            [criterium.core :as crit])))
 
 #?(:clj (set! *warn-on-reflection* true))
 #?(:cljs (enable-console-print!))
@@ -24,21 +26,23 @@
           nil
           (+ 7 max-v))))))
 
-(defn valid-moves [state]
+(defn valid-moves
+  "Returns a list of all the columns that can be played"
+  [state]
   (filter identity (map (partial highest-column (:occupied state))
                         cols)))
 
-(def horizontals
+(def horizontal-winning-positions
   (for [row (range 6)
         x (range 4)]
     (range (+ x (* row 7)) (+ x 4 (* row 7)))))
 
-(def verticals
+(def vertical-winning-positions
   (for [column (range 7)
         x (range 3)]
     [(+ column (* x 7)) (+ column (* (+ 1 x) 7)) (+ column (* (+ 2 x) 7)) (+ column (* (+ 3 x) 7))]))
 
-(def diagonals
+(def diagonal-winning-positions
   [
    [0 8 16 24]
    [1 9 17 25]
@@ -69,7 +73,6 @@
    [36 30 24 18]
    [37 31 25 19]
    [38 32 26 20]
-
    ])
 
 (defn coll-to-bitfield [v]
@@ -81,11 +84,15 @@
           v
           ))
 
-(def victory-positions (longs (long-array (map coll-to-bitfield (concat verticals horizontals diagonals)))))
+(def victory-positions
+  (->> (concat vertical-winning-positions horizontal-winning-positions diagonal-winning-positions)
+       (map coll-to-bitfield)
+       long-array
+       longs))
 
-(defn check-win [board]
-  (if (>= (count board) 4)
-    (let [board-bitfield (coll-to-bitfield board)]
+(defn check-win [player-positions]
+  (if (>= (count player-positions) 4)
+    (let [board-bitfield (coll-to-bitfield player-positions)]
       ; Check the board state against each of the winning positions
       (areduce ^longs victory-positions
                idx, ret, false

@@ -67,7 +67,7 @@
        [:tr
         (for [column (range 7)]
           [:td.grid
-           #_[:span.pull-right (+ column (* row 7))]
+           [:span.pull-right (+ column (* row 7))]
            (render-position zipped-map (+ column (* row 7)))])])
      ]))
 

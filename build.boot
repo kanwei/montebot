@@ -12,6 +12,8 @@
                   [org.clojure/clojurescript "1.9.293"]
                   [org.clojure/test.check "0.9.0"]
                   [org.clojure/core.memoize "0.5.9"]
+                  [com.taoensso/timbre "4.8.0"]
+                  [criterium "0.4.4"]
 
                   ; Webjars
                   [ring-webjars "0.1.1"]
