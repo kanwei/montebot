@@ -1,22 +1,19 @@
 (ns montebot.connect4
   #?(:cljs (:import [goog.math Long]))
-  (:require clojure.set
-    #?(:clj [criterium.core :as crit])
-
-    #_[montebot.core :as montebot]))
+  (:require clojure.set))
 
 #?(:clj (set! *warn-on-reflection* true))
 #?(:cljs (enable-console-print!))
 
 (defn initial-state []
-  {:active :p1
+  {:active   :p1
    :occupied []
-   :p1 []
-   :p2 []})
+   :p1       []
+   :p2       []})
 
 (def cols (vec (range 7)))
 
-(def MAX_VALUE 9999999)
+(def MAX_VALUE #?(:clj Long/MAX_VALUE :cljs js/Number.MAX_VALUE))
 
 (defn highest-column [xs col]
   (let [max-col (filter #(= col (mod % 7)) xs)]
@@ -78,7 +75,7 @@
 (defn coll-to-bitfield [v]
   (reduce (fn [acc x]
             #?(:cljs (.or (.shiftLeft (Long. 1) x) acc)
-               :clj (bit-set acc x))
+               :clj  (bit-set acc x))
             )
           (Long. 0)
           v
@@ -209,5 +206,5 @@
                                  move-history
                                  n-iterations) move-history))
 
-;(time (next-move [] 2000))
+#_(time (next-move [] 2000))
 
