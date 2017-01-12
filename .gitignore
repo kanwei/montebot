@@ -9,3 +9,4 @@ pom.xml.asc
 /.nrepl-port
 resources/public/js/cljs.js
 resources/public/js/cljs
+project.clj
