@@ -1,8 +1,8 @@
-(ns ulam.connect4client
+(ns montebot.connect4client
   (:require-macros [reagent.ratom :refer [reaction]])
   (:require clojure.set
             [reagent.core :as reagent :refer [atom]]
-            [ulam.connect4 :as connect4]
+            [montebot.connect4 :as connect4]
             [re-frame.core :refer [register-handler subscribe dispatch register-sub]]
             ))
 

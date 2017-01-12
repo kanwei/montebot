@@ -1,4 +1,4 @@
-# ulam
+# montebot
 
 Monte Carlo Tree Search (MCTS) for Clojure. Framework for general game playing.
 

@@ -1,4 +1,4 @@
-(ns ulam.core
+(ns montebot.core
   (:gen-class))
 
 (defn -main

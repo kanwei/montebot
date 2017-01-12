@@ -1,5 +1,5 @@
-(ns ulam.tictactoe
-  (require [ulam.core :as ulam]
+(ns montebot.tictactoe
+  (require [montebot.core :as montebot]
            [criterium.core :as crit]
            [clojure.math.numeric-tower :as math]))
 

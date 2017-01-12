@@ -1,6 +1,6 @@
-(ns ulam.core-test
+(ns montebot.core-test
   (:require [clojure.test :refer :all]
-            [ulam.core :refer :all]))
+            [montebot.core :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."

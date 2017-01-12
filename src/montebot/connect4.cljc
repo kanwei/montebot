@@ -1,9 +1,9 @@
-(ns ulam.connect4
+(ns montebot.connect4
   #?(:cljs (:import [goog.math Long]))
   (:require clojure.set
     #?(:clj [criterium.core :as crit])
 
-    #_[ulam.core :as ulam]))
+    #_[montebot.core :as montebot]))
 
 #?(:clj (set! *warn-on-reflection* true))
 #?(:cljs (enable-console-print!))
