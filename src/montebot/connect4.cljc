@@ -80,9 +80,11 @@
             #?(:cljs (.or (.shiftLeft (Long. 1) x) acc)
                :clj  (bit-set acc x))
             )
-          (Long. 0)
+          (long 0)
           v
           ))
+
+#_(crit/quick-bench (coll-to-bitfield [0 1 2 3]))
 
 (def victory-positions
   (->> (concat vertical-winning-positions horizontal-winning-positions diagonal-winning-positions)
@@ -224,5 +226,5 @@
                                  move-history
                                  n-iterations) move-history))
 
-#_(time (next-move [] 2000))
+#_(time (next-move [] 1000))
 
