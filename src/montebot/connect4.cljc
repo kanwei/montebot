@@ -91,16 +91,27 @@
        longs))
 
 (defn check-win [player-positions]
-  (if (>= (count player-positions) 4)
+  (if (< (count player-positions) 4)
+    false
     (let [board-bitfield (coll-to-bitfield player-positions)]
       ; Check the board state against each of the winning positions
-      (areduce ^longs victory-positions
-               idx, ret, false
-               (or ret
-                   (.equals (aget victory-positions idx)
-                            (.and (aget victory-positions idx) board-bitfield)))))))
+      (loop [pos 0]
+        (if (= pos 69)
+          false
+          (if (#?(:clj  =
+                  :cljs .equals) (aget ^longs victory-positions pos)
+                                 (#?(:clj  bit-and
+                                     :cljs .and) (aget ^longs victory-positions pos) board-bitfield))
+            true
+            (recur (inc pos)))))
+      #_(areduce ^longs victory-positions
+                 idx, ret, false
+                 (or ret
+                     (.equals (aget victory-positions idx)
+                              (.and (aget victory-positions idx) board-bitfield)))))))
 
-;(crit/quick-bench (check-win [0 1 2 3]))
+
+#_(crit/quick-bench (check-win [19 10 1 3 2 3 4 5 38 32 26 20]))
 
 (defn check-terminal [state]
   (cond (check-win (:p1 state)) :p1
@@ -156,8 +167,8 @@
     (let [move (rand-nth (valid-moves state))]
       (recur (perform-move state move)))))
 
-;(crit/quick-bench (simulate-game (initial-state)))
-;(crit/quick-bench (check-terminal (initial-state)))
+#_(crit/quick-bench (simulate-game (initial-state)))
+#_(crit/quick-bench (check-terminal (initial-state)))
 
 (defn state-from-moves [state move-list]
   (if (empty? move-list)
