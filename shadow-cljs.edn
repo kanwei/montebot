@@ -1,0 +1,16 @@
+;; shadow-cljs configuration
+{:source-paths
+ ["src"]
+
+ :dependencies
+ [[org.clojure/clojurescript "1.10.217"]
+  [reagent "0.8.0-alpha2" :exclusions [cljsjs/react cljsjs/react-dom]]
+  [cljsjs/react "16.2.0-3"]
+  [cljsjs/react-dom "16.2.0-3"]
+  [re-frame "0.10.5" :exclusions [reagent]]]
+
+ :builds
+ {:app {:output-dir "resources/public/js"
+        :target :browser
+        :asset-path "/js"
+        :modules {:montebot {:entries [montebot.connect4client]}}}}}

@@ -3,8 +3,7 @@
   (:require clojure.set
             [reagent.core :as reagent :refer [atom]]
             [montebot.connect4 :as connect4]
-            [re-frame.core :refer [register-handler subscribe dispatch register-sub]]
-            ))
+            [re-frame.core :refer [register-handler subscribe dispatch register-sub]]))
 
 (enable-console-print!)
 

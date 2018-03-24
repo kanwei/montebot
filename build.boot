@@ -5,6 +5,7 @@
                   ; Build Deps
                   [adzerk/boot-cljs "2.1.4" :scope "test"]
                   [boot-deps "0.1.9" :scope "test"]
+                  [metosin/boot-alt-http "0.2.0"]
 
                   [org.clojure/clojure "1.9.0" :scope "provided"]
                   [org.clojure/clojurescript "1.10.217"]
@@ -16,7 +17,6 @@
                   [ring-webjars "0.1.1"]
 
                   ; CLJS
-                  [re-frame "0.10.5"]
                   [reagent "0.8.0-alpha2" :exclusions [cljsjs/react cljsjs/react-dom]]
                   [cljsjs/react "16.2.0-3"]
                   [cljsjs/react-dom "16.2.0-3"]
@@ -62,6 +62,7 @@
          (generate-lein-project-file!))
 
 (require '[adzerk.boot-cljs :refer :all])
+(require '[metosin.boot-alt-http :refer :all])
 
 (deftask dev
          "Run when developing"
@@ -69,7 +70,7 @@
          (lein-generate)
          (comp
            (watch)
-
+           (serve :directories #{"resources/public"})
            #_(cljs :compiler-options {:output-wrapper true
                                     :parallel-build true
                                     :pretty-print   false
