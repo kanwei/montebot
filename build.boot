@@ -3,27 +3,24 @@
   :resource-paths #{"resources/public"}
   :dependencies '[
                   ; Build Deps
-                  [adzerk/boot-cljs "1.7.228-2" :scope "test"]
-                  [kanwei/boot-http "0.7.4" :scope "test"]
-                  [deraen/boot-sass "0.3.0"]
-                  [boot-deps "0.1.6" :scope "test"]
+                  [adzerk/boot-cljs "2.1.4" :scope "test"]
+                  [boot-deps "0.1.9" :scope "test"]
 
-                  [org.clojure/clojure "1.9.0-alpha14" :scope "provided"]
-                  [org.clojure/clojurescript "1.9.293"]
+                  [org.clojure/clojure "1.9.0" :scope "provided"]
+                  [org.clojure/clojurescript "1.10.217"]
                   [org.clojure/test.check "0.9.0"]
-                  [org.clojure/core.memoize "0.5.9"]
-                  [com.taoensso/timbre "4.8.0"]
+                  [org.clojure/core.memoize "0.7.1"]
                   [criterium "0.4.4"]
 
                   ; Webjars
                   [ring-webjars "0.1.1"]
 
                   ; CLJS
-                  [re-frame "0.9.1"]
-                  [reagent "0.6.0" :exclusions [cljsjs/react-dom-server]]
-                  [cljsjs/react "15.4.0-0"]
-                  [cljsjs/react-dom "15.4.0-0"]
-                  [cljsjs/react-dom-server "15.4.0-0"]
+                  [re-frame "0.10.5"]
+                  [reagent "0.8.0-alpha2" :exclusions [cljsjs/react cljsjs/react-dom]]
+                  [cljsjs/react "16.2.0-3"]
+                  [cljsjs/react-dom "16.2.0-3"]
+                  [re-frame "0.10.5" :exclusions [reagent]]
 
                   ; CLJ
                   [org.clojure/math.numeric-tower "0.0.4"]])
@@ -36,7 +33,7 @@
        :manifest {"Description" "Montebot app"
                   "Url"         "https://github.com/kanwei/montebot"}})
 
-(defn- generate-lein-project-file! [& {:keys [keep-project] :or {:keep-project true}}]
+(defn- generate-lein-project-file! []
   (require 'clojure.java.io)
   (let [pfile ((resolve 'clojure.java.io/file) "project.clj")
         ; Only works when pom options are set using task-options!
@@ -52,7 +49,6 @@
                        :source-paths (vec (concat (get-env :source-paths)
                                                   (get-env :resource-paths)))]))
         proj (pp-str head)]
-    (if-not keep-project (.deleteOnExit pfile))
     (spit pfile proj)))
 
 (deftask lein-generate
@@ -63,11 +59,9 @@
           to the generated `project.clj` file by specifying a `:lein` key in the boot
           environment whose value is a map of keys-value pairs to add to `project.clj`."
          []
-         (generate-lein-project-file! :keep-project true))
+         (generate-lein-project-file!))
 
 (require '[adzerk.boot-cljs :refer :all])
-(require '[pandeiro.boot-http :refer :all])
-(require '[deraen.boot-sass :refer :all])
 
 (deftask dev
          "Run when developing"
@@ -75,12 +69,8 @@
          (lein-generate)
          (comp
            (watch)
-           (sass :output-style :nested)
-           (serve :dir "target" :port 8888)
-           #_(serve :init 'montebot.handler/init
-                  :handler 'montebot.handler/app
-                  :reload true)
-           (cljs :compiler-options {:output-wrapper true
+
+           #_(cljs :compiler-options {:output-wrapper true
                                     :parallel-build true
                                     :pretty-print   false
                                     :compiler-stats true}
@@ -92,11 +82,11 @@
          "Build uberjar"
          []
          (comp
-           (cljs :optimizations :advanced
+           #_(cljs :optimizations :advanced
                  :compiler-options {:output-wrapper true
                                     :parallel-build false
                                     :pretty-print   false})
-           (sass :output-style :compressed)
+
            (aot)
            (pom)
            (uber)
