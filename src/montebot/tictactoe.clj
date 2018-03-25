@@ -5,8 +5,8 @@
 
 (defn init []
   {:active :p1
-  :p1 2r000000000
-  :p2 2r000000000})
+   :p1     2r000000000
+   :p2     2r000000000})
 
 (def possible-moves
   (for [i (range 9)]
@@ -15,7 +15,7 @@
 (defn valid-moves [state]
   (let [occupied (bit-or (:p1 state) (:p2 state))]
     (filter #(zero? (bit-and occupied %))
-                      possible-moves)))
+            possible-moves)))
 
 (def winning-positions
   [2r111000000                                              ;horizontals
@@ -25,8 +25,7 @@
    2r010010010
    2r001001001
    2r100010001                                              ;diagonals
-   2r001010100
-    ])
+   2r001010100])
 
 (defn check-win [board]
   (some identity (map (fn [winning-pos]
@@ -56,8 +55,8 @@
   (let [valids (valid-moves state)]
     (loop [n 0
            stats (into {}
-                  (for [move valids]
-                    [move {:total 0 :n 0}]))]
+                       (for [move valids]
+                         [move {:total 0 :n 0}]))]
       (if (= 1 (mod n 100000))
         (format-stats stats))
       (let [random-move (rand-nth valids)

@@ -112,7 +112,6 @@
                      (.equals (aget victory-positions idx)
                               (.and (aget victory-positions idx) board-bitfield)))))))
 
-
 #_(crit/quick-bench (check-win [19 10 1 3 2 3 4 5 38 32 26 20]))
 
 (defn check-terminal [state]
@@ -142,8 +141,7 @@
                                 (cond
                                   (= result :draw) 0.5
                                   (= result player) 0
-                                  (not= result player) 1
-                                  )))))))
+                                  (not= result player) 1)))))))
 
 (defn backprop [tree path result]
   (if (nil? (tree path))
@@ -152,8 +150,7 @@
            (if-not (empty? path)
              (subvec path 0 (dec (count path)))
              nil)
-           result)
-    ))
+           result)))
 
 (defn best-child [mtcs path]
   (last (sort-by #(uct (mtcs %) (:visited (mtcs path)))
@@ -187,8 +184,7 @@
                   (assoc new-path
                          (if terminal-result
                            {:state new-state :terminal true :visited 0 :score 0 :result terminal-result}
-                           {:state new-state :visited 0 :score 0}))))
-            )
+                           {:state new-state :visited 0 :score 0})))))
           mtcs
           (valid-moves state)))
 
