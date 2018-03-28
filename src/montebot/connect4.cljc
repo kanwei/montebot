@@ -7,13 +7,12 @@
 #?(:clj (set! *warn-on-reflection* true))
 #?(:cljs (enable-console-print!))
 
-(defn initial-state []
-  {:active   :p1
-   :occupied []
-   :p1       []
-   :p2       []})
-
 (def cols (vec (range 7)))
+
+(defrecord State [active occupied p1 p2])
+
+(defn initial-state []
+  (State. :p1 [] [] []))
 
 (def MAX_VALUE #?(:clj Long/MAX_VALUE :cljs js/Number.MAX_VALUE))
 
@@ -119,11 +118,22 @@
         (check-win (:p2 state)) :p2
         (empty? (valid-moves state)) :draw))
 
-(defn perform-move [state move]
+(defn perform-move-old [state move]
   (-> state
-      (update-in [(:active state)] #(conj % move))
-      (update-in [:occupied] #(conj % move))
+      (update (:active state) #(conj % move))
+      (update :occupied #(conj % move))
       (assoc :active (if (= :p1 (:active state)) :p2 :p1))))
+
+(defn perform-move [state move]
+  (let [p1-active? (= :p1 (:active state))]
+    (State. (if p1-active? :p2 :p1)
+            (conj (:occupied state) move)
+            (if p1-active?
+              (conj (:p1 state) move)
+              (:p1 state))
+            (if (not p1-active?)
+              (conj (:p2 state) move)
+              (:p2 state)))))
 
 (defn uct [node parent-visits]
   (if (zero? (:visited node))
