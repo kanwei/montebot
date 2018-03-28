@@ -8,7 +8,7 @@
                   [metosin/boot-alt-http "0.2.0"]
 
                   [org.clojure/clojure "1.9.0" :scope "provided"]
-                  [org.clojure/clojurescript "1.10.217"]
+                  [org.clojure/clojurescript "1.10.238"]
                   [org.clojure/test.check "0.9.0"]
                   [org.clojure/core.memoize "0.7.1"]
                   [criterium "0.4.4"]
@@ -70,6 +70,8 @@
          (lein-generate)
          (comp
            (watch)
+           (repl :port 62626
+                 :server true)
            (serve :directories #{"resources/public"})
            #_(cljs :compiler-options {:output-wrapper true
                                     :parallel-build true

@@ -3,7 +3,7 @@
  ["src"]
 
  :dependencies
- [[org.clojure/clojurescript "1.10.217"]
+ [[org.clojure/clojurescript "1.10.238"]
   [reagent "0.8.0-alpha2" :exclusions [cljsjs/react cljsjs/react-dom]]
   [cljsjs/react "16.2.0-3"]
   [cljsjs/react-dom "16.2.0-3"]
